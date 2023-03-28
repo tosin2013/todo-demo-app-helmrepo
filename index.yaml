@@ -3,6 +3,16 @@ entries:
   todo-demo-app:
   - apiVersion: v2
     appVersion: 0.0.2
+    created: "2023-03-28T02:54:33.927486587Z"
+    description: A Helm chart for Kubernetes
+    digest: fb49b9db87601235473091dff8cee15d37ee914c2e1c220d8129675863137b7e
+    name: todo-demo-app
+    type: application
+    urls:
+    - https://github.com/tosin2013/todo-demo-app-helmrepo/releases/download/todo-demo-app-0.0.1/todo-demo-app-0.0.1.tgz
+    version: 0.0.1
+  - apiVersion: v2
+    appVersion: 0.0.2
     created: "2023-03-28T02:52:15.07781973Z"
     description: A Helm chart for Kubernetes
     digest: 2c635c4b56360d806968bf3563664f9fa302655f12a9482d1e60c3f4c9426463
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/tosin2013/todo-demo-app-helmrepo/releases/download/todo-demo-app-0.0.0/todo-demo-app-0.0.0.tgz
     version: 0.0.0
-generated: "2023-03-28T02:52:15.07782403Z"
+generated: "2023-03-28T02:54:33.927497487Z"
