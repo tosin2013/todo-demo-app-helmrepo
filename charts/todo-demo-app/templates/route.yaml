@@ -6,7 +6,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: todo-demo-app-deployment
+    name:  {{ include "todo-demo-app.fullname" . }}
     weight: 100
   port:
     targetPort: http
