@@ -4,7 +4,7 @@ set -exuo pipefail
 ls -R .
 
 
-CHART_DIRS="./charts/quarkuscoffeeshop-charts"
+CHART_DIRS="./charts/todo-demo-app"
 KUBEVAL_VERSION="0.16.0"
 SCHEMA_LOCATION="https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/"
 REPO_PATH="gh-pages"
