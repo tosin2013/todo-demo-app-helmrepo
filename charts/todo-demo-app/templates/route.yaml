@@ -6,11 +6,8 @@ metadata:
 spec:
   to:
     kind: Service
-    name: todo-demo-app
+    name: todo-demo-app-deployment
     weight: 100
   port:
     targetPort: http
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
