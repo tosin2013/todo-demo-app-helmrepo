@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch history
         run: git fetch --prune --unshallow
       - name: Show path
@@ -22,7 +22,7 @@ jobs:
           pwd
           cd charts
       - name: Run chart-testing (lint)
-        uses: helm/chart-testing-action@v1.0.0
+        uses: helm/chart-testing-action@v2.4.0
         with:
           command: lint
           config: .github/ct.yaml
@@ -32,7 +32,7 @@ jobs:
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Run helm-docs
         run: .github/helm-docs.sh
 
