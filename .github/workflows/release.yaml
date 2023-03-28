@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'charts/**'
+  pull_request:
+    branches:
+      - main
+
 
 jobs:
   release:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
