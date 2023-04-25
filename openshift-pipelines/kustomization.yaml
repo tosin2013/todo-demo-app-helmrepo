@@ -4,5 +4,7 @@ resources:
   - pipeline-sa.yaml
   - maven-source-pvc.yml
   - pvc.yml
+  - git-pipeline-resource.yaml
+  - image-pipeline-resource.yaml
   - pushImageToQuay.yaml
   - deploy-pipeline.yaml
