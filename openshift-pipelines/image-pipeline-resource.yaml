@@ -4,6 +4,7 @@ metadata:
   name: todo-demo-app-image
   labels:
     app: todo-demo-app
+  namespace: todo-demo-app
 spec:
   type: image
   params:
