@@ -1,0 +1,12 @@
+# Deploying Todo App with OpenShift pipelines
+Us this to quickly deploy app 
+
+**Test Configuration**
+```bash
+kustomize build not-helm
+```
+
+**Deploy App Remotely**
+```bash 
+oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/not-helm
+```
