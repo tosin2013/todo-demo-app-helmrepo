@@ -38,7 +38,7 @@ spec:
         - name: deleteExisting
           value: 'true'
       taskRef:
-        kind: Task
+        kind: ClusterTask
         name: git-clone
       workspaces:
         - name: output
@@ -55,7 +55,7 @@ spec:
       runAfter:
         - fetch-repository
       taskRef:
-        kind: Task
+        kind: ClusterTask
         name: maven
       workspaces:
         - name: maven-settings
