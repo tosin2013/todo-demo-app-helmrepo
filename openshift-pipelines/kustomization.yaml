@@ -6,6 +6,7 @@ resources:
   - pvc.yml
   - git-pipeline-resource.yaml
   - image-pipeline-resource.yaml
+  - sed-file.yaml
   - pushImageToQuay.yaml
   - generic-deploy-pipeline.yaml
   - quay-deploy-pipeline.yaml

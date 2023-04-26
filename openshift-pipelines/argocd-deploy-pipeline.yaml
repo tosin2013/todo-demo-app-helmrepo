@@ -91,16 +91,37 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
-    - name: push-to-test-env
+    - name: update-image-var-helmchart
+      taskRef:
+        name: sed-file
       params:
-        - name: SCRIPT
-          value: |
-            oc patch deployment/todo-demo-app  --patch='{"spec":{"template":{"spec":{"containers":[{"name":"todo-demo-app","image":"image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:'$(params.IMAGE_TAG)'"}]}}}}' -n todo-demo-app
+      - name: filename
+        value: README.md
+      - name: pattern
+        value: "Hello, world!"
+      - name: replacement
+        value: "Hello, Tekton!"
       runAfter:
         - tag-test-image
+      workspaces:
+      - name: source
+        workspace: shared-workspace
+    - name: git-commit-task
       taskRef:
-        kind: ClusterTask
-        name: openshift-client
+        name: git-commit
+      params:
+      - name: commit-msg
+        value: "Update README.md"
+      - name: git-credentials
+        value:
+          secretKeyRef:
+            name: git-credentials
+            key: credentials
+      runAfter:
+        - update-image-var-helmchart
+      workspaces:
+      - name: source
+        workspace: shared-workspace
   workspaces:
     - name: shared-workspace
     - name: maven-settings
