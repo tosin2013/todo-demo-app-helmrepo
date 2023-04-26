@@ -5,6 +5,7 @@ resources:
   - maven-source-pvc.yml
   - pvc.yml
   - git-pipeline-resource.yaml
+  - git-commit.yaml
   - image-pipeline-resource.yaml
   - sed-file.yaml
   - pushImageToQuay.yaml

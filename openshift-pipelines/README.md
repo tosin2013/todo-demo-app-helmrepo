@@ -11,6 +11,12 @@ kustomize build openshift-pipelines
 oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/not-helm
 oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
 ```
+
+## Optional: Deploy Openshift Pipelines
+```bash
+oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/openshift-pipelines-operator/overlays/latest
+```
+
 ## Optional Argocd Configuration
 ```
 kubectl apply -f https://api.hub.tekton.dev/v1/resource/tekton/task/argocd-task-connect-repo/0.1/raw
