@@ -25,3 +25,9 @@ oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/q
 ```
 ### generic-quay-todo-demo-app-pipeline
 ![20230426080630](https://i.imgur.com/hUkCNCB.png)
+
+### build-and-push-to-quay-todo-demo-app
+**WIP**
+
+### argocd-quay-todo-demo-app-pipeline
+**WIP**
