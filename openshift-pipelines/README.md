@@ -6,15 +6,15 @@ Us this to quickly deploy app using tekton pipelines
 kustomize build openshift-pipelines
 ```
 
-**Deploy App Remotely**
-```bash 
-oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/not-helm
-oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
-```
-
 ## Optional: Deploy Openshift Pipelines
 ```bash
 oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/openshift-pipelines-operator/overlays/latest
+```
+
+## Deploy App Remotely
+```bash 
+oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/not-helm
+oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
 ```
 
 ## Optional Argocd Configuration
@@ -33,7 +33,11 @@ oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/q
 ![20230426080630](https://i.imgur.com/hUkCNCB.png)
 
 ### build-and-push-to-quay-todo-demo-app
-**WIP**
+```bash
+oc new-project todo-demo-app
+oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
+```
+
 
 ### argocd-quay-todo-demo-app-pipeline
 **WIP**
