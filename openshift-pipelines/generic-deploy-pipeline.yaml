@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: build-and-push-todo-demo-app
+  name: generic-quay-todo-demo-app-pipeline
   labels:
     app: todo-demo-app
   namespace: todo-demo-app
@@ -67,7 +67,7 @@ spec:
         - name: CONTEXT
           value: .
         - name: DOCKERFILE
-          value: src/main/docker/Dockerfile.jvm
+          value: src/main/docker/Dockerfile
         - name: IMAGE
           value: >-
             image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:$(params.IMAGE_TAG)
@@ -95,27 +95,12 @@ spec:
       params:
         - name: SCRIPT
           value: |
-            oc patch deployment/todo-demo-app  --patch='{"spec":{"template":{"spec":{"containers":[{"name":"todo-demo-app","image":"image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:'$(params.IMAGE_TAG)'"}]}}}}' -n quarkuscoffeeshop-demo
+            oc patch deployment/todo-demo-app  --patch='{"spec":{"template":{"spec":{"containers":[{"name":"todo-demo-app","image":"image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:'$(params.IMAGE_TAG)'"}]}}}}' -n todo-demo-app
       runAfter:
         - tag-test-image
       taskRef:
         kind: ClusterTask
         name: openshift-client
-    - name: push-todo-demo-app-image-to-quay
-      params:
-        - name: quay-io-repository
-          value: $(params.quay-io-repository)
-        - name: quay-io-image-tag-name
-          value: $(params.quay-io-image-tag-name)
-      resources:
-        inputs:
-          - name: image
-            resource: image
-      runAfter:
-        - push-to-test-env
-      taskRef:
-        kind: Task
-        name: push-todo-demo-app-image-to-quay
   workspaces:
     - name: shared-workspace
     - name: maven-settings

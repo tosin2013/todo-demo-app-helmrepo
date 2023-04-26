@@ -7,4 +7,6 @@ resources:
   - git-pipeline-resource.yaml
   - image-pipeline-resource.yaml
   - pushImageToQuay.yaml
-  - deploy-pipeline.yaml
+  - generic-deploy-pipeline.yaml
+  - quay-deploy-pipeline.yaml
+  - argocd-deploy-pipeline.yaml
