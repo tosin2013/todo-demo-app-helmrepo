@@ -22,6 +22,13 @@ oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipeli
 kubectl apply -f https://api.hub.tekton.dev/v1/resource/tekton/task/argocd-task-connect-repo/0.1/raw
 ```
 
+## Optional: Deploy Gitea
+```bash
+curl -OL https://raw.githubusercontent.com/tosin2013/openshift-demos/master/quick-scripts/deploy-gitea.sh
+chmod +x deploy-gitea.sh
+./deploy-gitea.sh
+```
+
 ## Optional Deploy Quay 
 ```bash
 oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/quay-registry-operator/operator/overlays/stable-3.8

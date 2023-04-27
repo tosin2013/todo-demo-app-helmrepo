@@ -17,17 +17,26 @@ spec:
     name: replacement
     type: string
   steps:
-  - name: sed
-    image: alpine:3.14
-    command:
-    - sh
-    - -c
-    - |
-      sed -i "s/$PATTERN/$REPLACEMENT/g" $FILENAME
-    env:
-    - name: FILENAME
-      value: $(params.filename)
-    - name: PATTERN
-      value: $(params.pattern)
-    - name: REPLACEMENT
-      value: $(params.replacement)
+    - command:
+        - sh
+        - '-c'
+        - |
+          sed -i "s/$PATTERN/$REPLACEMENT/g" $FILENAME
+      env:
+        - name: FILENAME
+          value: $(params.filename)
+        - name: PATTERN
+          value: $(params.pattern)
+        - name: REPLACEMENT
+          value: $(params.replacement)
+      image: 'alpine:3.14'
+      name: sed
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: pipeline-cache
+      workingDir: /var/lib/containers
+  volumes:
+    - name: pipeline-cache
+      persistentVolumeClaim:
+        claimName: todo-demo-app-shared-workspace-pvc

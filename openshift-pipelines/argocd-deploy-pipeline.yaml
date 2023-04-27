@@ -118,7 +118,7 @@ spec:
             name: git-credentials
             key: credentials
       runAfter:
-        - update-image-var-helmchart
+        - sed-file
       workspaces:
       - name: source
         workspace: shared-workspace
