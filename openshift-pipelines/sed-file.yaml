@@ -21,7 +21,9 @@ spec:
         - sh
         - '-c'
         - |
+          echo "sed -i \"s/$PATTERN/$REPLACEMENT/g\" $FILENAME"
           sed -i "s/$PATTERN/$REPLACEMENT/g" $FILENAME
+          cat $FILENAME
       env:
         - name: FILENAME
           value: $(params.filename)

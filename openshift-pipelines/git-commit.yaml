@@ -24,6 +24,10 @@ spec:
       git config --global user.name "Your Name"
       git add .
       git commit -m "$(params.commit-msg)"
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: pipeline-cache
+    workingDir: /var/lib/containers
     envFrom:
     - secretRef:
         name: git-credentials
@@ -39,10 +43,10 @@ spec:
     - secretRef:
         name: git-credentials
     volumeMounts:
-      - mountPath: /var/lib/containers
-        name: pipeline-cache
+    - mountPath: /var/lib/containers
+      name: pipeline-cache
     workingDir: /var/lib/containers
   volumes:
-    - name: pipeline-cache
-      persistentVolumeClaim:
-        claimName: todo-demo-app-shared-workspace-pvc
+  - name: pipeline-cache
+    persistentVolumeClaim:
+      claimName: todo-demo-app-shared-workspace-pvc

@@ -11,6 +11,10 @@ spec:
       description: Image Tag Value
       name: IMAGE_TAG
       type: string
+    - default: CHANGEME
+      description: Current Image Tag Value
+      name: CURRENT_IMAGE_TAG
+      type: string
     - default: quay.io/takinosh/todo-demo-app:v1
       name: quay-io-repository
       type: string
@@ -96,11 +100,11 @@ spec:
         name: sed-file
       params:
       - name: filename
-        value: README.md
+        value: app/values.yaml
       - name: pattern
-        value: "Hello, world!"
+        value: "$(params.CURRENT_IMAGE_TAG)"
       - name: replacement
-        value: "Hello, Tekton!"
+        value: "$(params.IMAGE_TAG)"
       runAfter:
         - tag-test-image
       workspaces:
@@ -111,14 +115,14 @@ spec:
         name: git-commit
       params:
       - name: commit-msg
-        value: "Update README.md"
+        value: "Update app/values.yaml with new image tag"
       - name: git-credentials
         value:
           secretKeyRef:
             name: git-credentials
             key: credentials
       runAfter:
-        - sed-file
+        - update-image-var-helmchart
       workspaces:
       - name: source
         workspace: shared-workspace
