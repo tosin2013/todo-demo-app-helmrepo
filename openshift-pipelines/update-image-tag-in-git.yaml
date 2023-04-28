@@ -4,12 +4,6 @@ metadata:
   name: update-image-tag-in-git
 spec:
   params:
-    - name: CONTEXT
-      description: Path to the directory to use as context.
-      default: .
-    - name: TLSVERIFY
-      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
-      default: "false"
     - name: GIT_REPOSITORY
       description: Git repository containing manifest files to update
       type: string
