@@ -18,4 +18,4 @@ jobs:
           npm i tekton-lint
           npm install -g tekton-lint
           tekton-lint --help
-          #tekton-lint generic-deploy-pipeline.yaml
+          tekton-lint generic-deploy-pipeline.yaml
