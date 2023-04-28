@@ -18,6 +18,7 @@ jobs:
           npm i tekton-lint
           npm install -g tekton-lint
           #tekton-lint --help
+      - name: Checkout
+        uses: actions/checkout@v3
           pwd
-          ls -R  /home/runner/work/todo-demo-app-helmrepo/todo-demo-app-helmrepo/
-          tekton-lint maven-build-task.yaml
+          tekton-lint openshift-pipelines/git-commit.yaml
