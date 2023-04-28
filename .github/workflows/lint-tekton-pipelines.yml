@@ -19,6 +19,6 @@ jobs:
           npm install -g tekton-lint
           #tekton-lint --help
           pwd
-          cd openshift/pipelines
+          cd /home/runner/work/todo-demo-app-helmrepo/todo-demo-app-helmrepo
           ls -lath .
           tekton-lint maven-build-task.yaml
