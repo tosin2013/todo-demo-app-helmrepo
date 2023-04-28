@@ -21,7 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
           
-      - name: Start Chris
+      - name: Start testing pipelines
         run: | 
           pwd
-          tekton-lint openshift-pipelines/git-commit.yaml
+          cd openshift-pipelines/
+          tekton-lint git-commit.yaml
+          tekton-lint update-image-tag-in-git.yaml
