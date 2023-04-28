@@ -17,6 +17,7 @@ spec:
     name: replacement
     type: string
   resources:
+    inputs:
     - name: app-git
       type: git
   steps:

@@ -28,6 +28,7 @@ spec:
       type: string
       default: 1
   resources:
+    inputs:
     - name: source
       type: git
   steps:

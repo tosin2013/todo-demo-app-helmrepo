@@ -113,37 +113,6 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
-    - name: update-image-var-helmchart
-      taskRef:
-        name: sed-file
-      params:
-      - name: filename
-        value: app/values.yaml
-      - name: pattern
-        value: "$(params.CURRENT_IMAGE_TAG)"
-      - name: replacement
-        value: "$(params.IMAGE_TAG)"
-      runAfter:
-        - tag-test-image
-      workspaces:
-      - name: source
-        workspace: helm-shared-workspace
-    - name: git-commit-task
-      taskRef:
-        name: git-commit
-      params:
-      - name: commit-msg
-        value: "Update app/values.yaml with new image tag"
-      - name: git-credentials
-        value:
-          secretKeyRef:
-            name: git-credentials
-            key: credentials
-      runAfter:
-        - update-image-var-helmchart
-      workspaces:
-      - name: source
-        workspace: helm-shared-workspace
   workspaces:
     - name: shared-workspace
     - name: maven-settings
