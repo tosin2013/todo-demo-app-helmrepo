@@ -63,7 +63,7 @@ spec:
         kind: ClusterTask
         name: git-clone
       workspaces:
-        - name: helm-output
+        - name: output
           workspace: helm-shared-workspace
     - name: maven-run
       params:

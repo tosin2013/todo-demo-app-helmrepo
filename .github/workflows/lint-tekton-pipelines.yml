@@ -15,3 +15,5 @@ jobs:
       - name: Test Tekton Pipeline and tasks 
         run: |
           npm --version
+          npm install -g tekton-lint
+          tekton-lint generic-deploy-pipeline.yaml

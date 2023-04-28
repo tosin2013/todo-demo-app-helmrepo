@@ -16,6 +16,9 @@ spec:
     description: Target replacement
     name: replacement
     type: string
+  resources:
+    - name: app-git
+      type: git
   steps:
     - command:
         - sh
