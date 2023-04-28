@@ -18,6 +18,7 @@ jobs:
           npm i tekton-lint
           npm install -g tekton-lint
           #tekton-lint --help
+          pwd
           cd openshift/pipelines
           ls -lath .
           tekton-lint maven-build-task.yaml
