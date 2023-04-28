@@ -20,5 +20,8 @@ jobs:
           #tekton-lint --help
       - name: Checkout
         uses: actions/checkout@v3
+          
+      - name: Start Chris
+        run: | 
           pwd
           tekton-lint openshift-pipelines/git-commit.yaml
