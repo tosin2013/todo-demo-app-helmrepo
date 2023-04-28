@@ -17,6 +17,7 @@ jobs:
           npm --version
           npm i tekton-lint
           npm install -g tekton-lint
-          tekton-lint --help
-          tekton-lint openshift-pipelines/image-pipeline-resource.yaml
-          tekton-lint openshift-pipelines/maven-source-pvc.yml
+          #tekton-lint --help
+          cd openshift/pipelines
+          ls -lath .
+          tekton-lint maven-build-task.yaml
