@@ -47,6 +47,24 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+    - name: fetch-helm-repository
+      params:
+        - name: url
+          value: 'https://gitea-with-admin-gitea.apps.cluster-vcx8l.vcx8l.sandbox2835.opentlc.com/user1/todo-demo-app-helmrepo'
+        - name: revision
+          value: main
+        - name: subdirectory
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+      runAfter:
+        - fetch-repository
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: helm-output
+          workspace: helm-shared-workspace
     - name: maven-run
       params:
         - name: CONTEXT_DIR
@@ -57,7 +75,7 @@ spec:
             - clean
             - package
       runAfter:
-        - fetch-repository
+        - fetch-helm-repository
       taskRef:
         kind: ClusterTask
         name: maven
@@ -109,7 +127,7 @@ spec:
         - tag-test-image
       workspaces:
       - name: source
-        workspace: shared-workspace
+        workspace: helm-shared-workspace
     - name: git-commit-task
       taskRef:
         name: git-commit
@@ -125,7 +143,8 @@ spec:
         - update-image-var-helmchart
       workspaces:
       - name: source
-        workspace: shared-workspace
+        workspace: helm-shared-workspace
   workspaces:
     - name: shared-workspace
     - name: maven-settings
+    - name: helm-shared-workspace
