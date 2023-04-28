@@ -18,4 +18,5 @@ jobs:
           npm i tekton-lint
           npm install -g tekton-lint
           tekton-lint --help
-          tekton-lint image-pipeline-resource.yaml
+          tekton-lint openshift-pipelines/image-pipeline-resource.yaml
+          tekton-lint openshift-pipelines/maven-source-pvc.yml
