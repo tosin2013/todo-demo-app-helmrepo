@@ -12,20 +12,26 @@ spec:
       default: "false"
     - name: GIT_REPOSITORY
       description: Git repository containing manifest files to update
+      type: string
     - name: GIT_EMAIL
       default: pipeline@example.com
     - name: GIT_NAME
       default: todo-demo-app
+      type: string
     - name: GIT_MANIFEST_DIR
       default: yamls/ocp
+      type: string
     - name: TARGET_IMAGE
       description: Target Registry Name
       default: quay.io/takinosh/todo-demo-app
+      type: string
     - name: TARGET_TAG
       description: Target TAG
+      type: string
       default: v1
     - name: REPLICA_COUNT
       description: Replica Count
+      type: string
       default: 1
   resources:
     - name: source
