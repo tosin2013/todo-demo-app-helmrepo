@@ -16,5 +16,6 @@ jobs:
         run: |
           npm --version
           npm i tekton-lint
-          tekton-lint --help 
+          npm install -g tekton-lint
+          tekton-lint --help
           #tekton-lint generic-deploy-pipeline.yaml
