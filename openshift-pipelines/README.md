@@ -84,8 +84,10 @@ BASE_URL=gitea-with-admin-gitea.apps.cluster-example.example.url.example.com
 ## Start Pipeline
 `echo "GIT_REPOSITORY: $(oc get route -A | grep quay-registry-quay-quay-registry | awk '{print $3}')/todo-app/todo-app"`
 ![20230501143544](https://i.imgur.com/oN769AD.png)
+
 ![20230501143624](https://i.imgur.com/UGKwjm1.png)
 
+![20230501150240](https://i.imgur.com/LhPJc0D.png)
 
 ## Manual Steps
 ### Optional: Deploy Openshift Pipelines
