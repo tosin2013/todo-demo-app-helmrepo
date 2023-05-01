@@ -86,7 +86,6 @@ BASE_URL=gitea-with-admin-gitea.apps.cluster-example.example.url.example.com
 ![20230501143544](https://i.imgur.com/oN769AD.png)
 ![20230501143624](https://i.imgur.com/UGKwjm1.png)
 
-**Start Pipeline**
 
 ## Manual Steps
 ### Optional: Deploy Openshift Pipelines
