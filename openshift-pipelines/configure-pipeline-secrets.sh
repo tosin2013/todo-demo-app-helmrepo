@@ -28,7 +28,7 @@ kubectl create secret generic "${SECRET_NAME}" \
   --from-literal="ARGOCD_USERNAME=$(echo ${USERNAME_BASE64} | base64 --decode)" \
   --from-literal="ARGOCD_PASSWORD=$(echo ${PASSWORD_BASE64} | base64 --decode)"
 
-
+oc adm policy add-scc-to-user privileged -z pipeline -n  todo-demo-app
 oc adm policy add-role-to-user admin system:serviceaccount:todo-demo-app:pipeline -n  todo-demo-app
 oc policy add-role-to-group system:image-puller system:serviceaccounts:todo-demo-app -n todo-demo-app
 # Create the ArgoCD config map
