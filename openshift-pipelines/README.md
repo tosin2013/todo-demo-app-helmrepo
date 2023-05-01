@@ -55,19 +55,26 @@ BASE_URL=gitea-with-admin-gitea.apps.cluster-example.example.url.example.com
 
 ### Populate Quay Secret
 `echo "USER ME: $(oc get route -A | grep quay-registry-quay-quay-registry | awk '{print $3}')"`
-**Create User**
+
+**Create User**  
 ![20230501135137](https://i.imgur.com/uZfyUsP.png)
-**Create todo-app organization**
+
+**Create todo-app organization**  
 ![20230501135248](https://i.imgur.com/gLwQXgw.png)
+
 **Create todo-app repo**
 ![20230501135340](https://i.imgur.com/cN6L4BM.png)
-**Get Secret**
+
+**Get Secret**  
 `username->Account Settings`
-![20230501135519](https://i.imgur.com/drw7vSl.png)
+![20230501135519](https://i.imgur.com/drw7vSl.png)  
+
 `Generate Encrypted Password`
-![20230501135548](https://i.imgur.com/TlFSRww.png)
+![20230501135548](https://i.imgur.com/TlFSRww.png)  
+
 `click on Kubernetes Secret ->View username-secret.yml`
-![20230501135723](https://i.imgur.com/KRfylLk.png)
+![20230501135723](https://i.imgur.com/KRfylLk.png)  
+
 `Copy secret into Openshift with the name container-registry-secret`
 ![20230501135827](https://i.imgur.com/UnxAx77.png)
 
