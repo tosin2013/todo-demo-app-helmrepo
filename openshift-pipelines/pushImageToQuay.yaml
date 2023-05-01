@@ -9,13 +9,13 @@ spec:
       - name: image
         type: image
   params:
-    - default: quarkuscoffeeshop
+    - default: container-registry-secret
       description: >-
         The quay.io account that matches the credentials stored in the mounted
         secret.
       name: quay-io-account
       type: string
-    - default: quay.io/quarkuscoffeeshop/todo-demo-app
+    - default: quay.io/takinosh/todo-demo-app
       description: The quay.io repository in which to store the image.
       name: quay-io-repository
       type: string
@@ -93,7 +93,7 @@ spec:
   volumes:
     - name: quay-auth-secret
       secret:
-        secretName: quay-auth-secret
+        secretName: container-registry-secret
     - name: pipeline-cache
       persistentVolumeClaim:
         claimName: todo-demo-app-shared-workspace-pvc

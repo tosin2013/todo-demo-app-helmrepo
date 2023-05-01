@@ -1,9 +1,9 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: argocd-quay-todo-demo-app-pipeline
   labels:
     app: todo-demo-app
+  name: argocd-quay-todo-demo-app-pipeline
   namespace: todo-demo-app
 spec:
   params:
@@ -15,21 +15,32 @@ spec:
       description: Current Image Tag Value
       name: CURRENT_IMAGE_TAG
       type: string
-    - default: quay.io/takinosh/todo-demo-app:v1
+    - default: 'quay.io/takinosh/todo-demo-app:v1'
       name: quay-io-repository
       type: string
     - default: latest
       name: quay-io-image-tag-name
       type: string
-    - default: webhook-secret
-      description: Webhook secret name
-      name: webhook-secret
+    - default: >-
+        gitea-with-admin-gitea.apps.cluster-f2fds.f2fds.sandbox3175.opentlc.com/user1/todo-demo-app-helmrepo
+      name: GIT_REPOSITORY
+      type: string
+    - default: pipeline@example.com
+      name: GIT_EMAIL
+      type: string
+    - default: todo-demo-app
+      name: GIT_NAME
+      type: string
+    - default: '1'
+      name: REPLICA_COUNT
       type: string
   resources:
     - name: app-git
       type: git
     - name: image
       type: image
+    - name: todo-demo-app-helmrepo-git
+      type: git
   tasks:
     - name: fetch-repository
       params:
@@ -47,24 +58,6 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-    - name: fetch-helm-repository
-      params:
-        - name: url
-          value: 'https://gitea-with-admin-gitea.apps.cluster-vcx8l.vcx8l.sandbox2835.opentlc.com/user1/todo-demo-app-helmrepo'
-        - name: revision
-          value: main
-        - name: subdirectory
-          value: ''
-        - name: deleteExisting
-          value: 'true'
-      runAfter:
-        - fetch-repository
-      taskRef:
-        kind: ClusterTask
-        name: git-clone
-      workspaces:
-        - name: output
-          workspace: helm-shared-workspace
     - name: maven-run
       params:
         - name: CONTEXT_DIR
@@ -75,7 +68,7 @@ spec:
             - clean
             - package
       runAfter:
-        - fetch-helm-repository
+        - fetch-repository
       taskRef:
         kind: ClusterTask
         name: maven
@@ -113,6 +106,57 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
+    - name: push-todo-demo-app-image-to-quay
+      params:
+        - name: quay-io-repository
+          value: $(params.quay-io-repository)
+        - name: quay-io-image-tag-name
+          value: $(params.quay-io-image-tag-name)
+      resources:
+        inputs:
+          - name: image
+            resource: image
+      runAfter:
+        - tag-test-image
+      taskRef:
+        kind: Task
+        name: push-todo-demo-app-image-to-quay
+    - name: update-image-tag-in-git
+      params:
+        - name: GIT_REPOSITORY
+          value: $(params.GIT_REPOSITORY)
+        - name: GIT_EMAIL
+          value: pipeline@example.com
+        - name: GIT_NAME
+          value: todo-demo-app
+        - name: GIT_MANIFEST_DIR
+          value: .
+        - name: TARGET_IMAGE
+          value: $(params.quay-io-repository) 
+        - name: TARGET_TAG
+          value: $(params.quay-io-image-tag-name)
+        - name: REPLICA_COUNT
+          value: $(params.REPLICA_COUNT)
+      resources:
+        inputs:
+          - name: source
+            resource: todo-demo-app-helmrepo-git
+      runAfter:
+        - push-todo-demo-app-image-to-quay
+      taskRef:
+        kind: Task
+        name: update-image-tag-in-git
+    - name: argocd-task-sync-and-wait
+      params:
+        - name: application-name
+          value: todo-demo-app
+        - name: revision
+          value: main
+      runAfter:
+        - update-image-tag-in-git
+      taskRef:
+        kind: ClusterTask
+        name: argocd-task-sync-and-wait
   workspaces:
     - name: shared-workspace
     - name: maven-settings

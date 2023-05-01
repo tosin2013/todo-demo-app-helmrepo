@@ -13,6 +13,7 @@ oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/o
 
 ## Deploy App Remotely
 ```bash 
+oc new-project todo-demo-app
 oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/not-helm
 oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
 ```
@@ -47,4 +48,8 @@ oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipeli
 
 
 ### argocd-quay-todo-demo-app-pipeline
-**WIP**
+```bash
+oc new-project todo-demo-app
+oc apply -k https://github.com/tosin2013/todo-demo-app-helmrepo/openshift-pipelines
+oc apply -k https://github.com/tosin2013/sno-quickstarts/gitops/cluster-config/openshift-gitops
+```
