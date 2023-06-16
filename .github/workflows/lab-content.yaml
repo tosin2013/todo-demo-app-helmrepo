@@ -22,6 +22,10 @@ on:
         description: GUID
         required: true
         default: 1234
+      openshift_user:
+        description: OpenShift user
+        required: true
+        default: admin
    
 jobs:
   agnosticd_deployment:
@@ -59,6 +63,6 @@ jobs:
           curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
           ./generate_vars.sh && cat extra_vars.yaml
           echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" \
-             -e"ocp_username=${{ secrets.OCP_USER }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
-             -e"ocp_workload=${{ inputs.agnosticd_workload }}}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -vvv
+             -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -vvv
           #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
