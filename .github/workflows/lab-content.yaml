@@ -1,0 +1,34 @@
+name: Configure Lab Content
+on:
+  workflow_dispatch:
+    inputs:
+      hostname:
+        description: 'hostname'
+        required: false
+        default: hostname
+      agnosticd_repo:
+        description: 'Ansible Agnostic Deployer, AKA AAD, AKA AgnosticD, is a fully automated 2 Phase deployer for building and deploying everything from basic infrastructure to fully configured running application environments running on either public Cloud Providers or OpenShift clusters.'
+        required: false
+        default: https://github.com/tosin2013/agnosticd.git
+        
+jobs:
+  configure_lab_content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - name: configure agnosticd deployment
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ inputs.hostname }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        command_timeout: 30m
+        script: | 
+          if [ -d "$HOME/agnosticd" ]; then
+            cd $HOME/agnosticd
+            git pull
+          else
+            git clone ${{ inputs.agnosticd_repo }}
+            cd $HOME/agnosticd
+          fi
