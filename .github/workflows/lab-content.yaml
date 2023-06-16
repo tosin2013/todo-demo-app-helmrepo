@@ -1,4 +1,4 @@
-name: Configure Lab Content
+name: Deploy Via AgnosticD
 on:
   workflow_dispatch:
     inputs:
@@ -12,7 +12,7 @@ on:
         default: https://github.com/tosin2013/agnosticd.git
         
 jobs:
-  configure_lab_content:
+  agnosticcd_deployment:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
