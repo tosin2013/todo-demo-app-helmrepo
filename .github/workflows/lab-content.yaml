@@ -45,6 +45,7 @@ jobs:
           #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
           #cat /tmp/hosts
           ansible-galaxy collection install kubernetes.core community.general
+          pwd
           ./generate_vars.sh && cat extra_vars.yaml
           #echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}'  -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}"  -e"@extra_vars.yaml" -vvv
           #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
