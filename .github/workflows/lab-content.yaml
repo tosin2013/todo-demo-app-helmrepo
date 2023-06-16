@@ -37,7 +37,7 @@ jobs:
             git clone ${{ inputs.agnosticd_repo }}
             cd $HOME/agnosticd
           fi
-          #sudo rm -rf /etc/ansible/roles/install_operator
+          sudo rm -rf /etc/ansible/roles/install_operator
           sudo cp -avi /home/lab-user/agnosticd/ansible/roles/install_operator /etc/ansible/roles
           ls /etc/ansible/roles
           echo "[all]" > /tmp/hosts 
