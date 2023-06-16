@@ -56,13 +56,15 @@ jobs:
           sudo cp -avi /home/lab-user/agnosticd/ansible/roles/install_operator /etc/ansible/roles
           ls /etc/ansible/roles
           echo "[all]" > /tmp/hosts 
-          echo "$control  ansible_host=${{ inputs.hostname }}    ansible_connection=ssh ansible_user=${{ secrets.USERNAME }}" >> /tmp/hosts 
+          echo "control  ansible_host=${{ inputs.hostname }}    ansible_connection=ssh ansible_user=${{ secrets.USERNAME }}"  ansible_ssh_private_key_file=/home/${{ secrets.USERNAME }}/.ssh/github-actions >> /tmp/hosts 
           #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
           #cat /tmp/hosts
           ansible-galaxy collection install kubernetes.core community.general
           curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
           ./generate_vars.sh && cat extra_vars.yaml
-          echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" \
+          echo ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
              -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
-             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -vvv
-          #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
+          ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
+             -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
