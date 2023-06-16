@@ -12,8 +12,16 @@ on:
         default: https://github.com/tosin2013/agnosticd.git
       agnosticd_workload:
         description: AgnosticD workload to deploy
-        required: false
+        required: true
         default: ocp4_workload_gitea_operator
+      agnosticd_action:
+        description: AgnosticD action to perform create/remove
+        required: true
+        default: create
+      guid:
+        description: GUID
+        required: true
+        default: 1234
    
 jobs:
   agnosticd_deployment:
@@ -24,6 +32,9 @@ jobs:
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ inputs.hostname }}
+        agnosticd_workload: ${{ inputs.agnosticd_workload }}
+        agnosticd_action: ${{ inputs.agnosticd_action }}
+        guid: ${{ inputs.guid }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
@@ -47,5 +58,7 @@ jobs:
           ansible-galaxy collection install kubernetes.core community.general
           curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
           ./generate_vars.sh && cat extra_vars.yaml
-          #echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}'  -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}"  -e"@extra_vars.yaml" -vvv
-          #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
+          echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" \
+             -e"ocp_username=${{ secrets.OCP_USER }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -vvv
+          #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${{ secrets.USERNAME }}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
