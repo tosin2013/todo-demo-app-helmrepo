@@ -10,7 +10,11 @@ on:
         description: 'Ansible Agnostic Deployer, AKA AAD, AKA AgnosticD, is a fully automated 2 Phase deployer for building and deploying everything from basic infrastructure to fully configured running application environments running on either public Cloud Providers or OpenShift clusters.'
         required: false
         default: https://github.com/tosin2013/agnosticd.git
-        
+      agnosticd_workload:
+        description: AgnosticD workload to deploy
+        required: false
+        default: ocp4_workload_gitea_operator
+   
 jobs:
   agnosticcd_deployment:
     runs-on: ubuntu-latest
@@ -25,6 +29,7 @@ jobs:
         port: ${{ secrets.PORT }}
         command_timeout: 30m
         script: | 
+          sudo dnf install wget openssh-clients sshpass ansible-core openssl python3-jmespath -y
           if [ -d "$HOME/agnosticd" ]; then
             cd $HOME/agnosticd
             git pull
@@ -32,3 +37,13 @@ jobs:
             git clone ${{ inputs.agnosticd_repo }}
             cd $HOME/agnosticd
           fi
+          sudo cp -avi /home/lab-user/agnosticd/ansible/roles/install_operator /etc/ansible/roles
+          ls /etc/ansible/roles
+          echo "[all]" > /tmp/hosts 
+          echo $control  ansible_host=${{ inputs.hostname }}    ansible_connection=ssh ansible_user=${{ secrets.USERNAME }}" >> /tmp/hosts 
+          #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
+          #cat /tmp/hosts
+          ansible-galaxy collection install kubernetes.core community.general
+          ./generate_vars.sh && cat extra_vars.yaml
+          #echo ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}'  -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}"  -e"@extra_vars.yaml" -vvv
+          #ansible-playbook -i /tmp/hosts  /builds/tosin/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e"~/.ssh/id_rsa" -e"ansible_user=${LAB_USER}" -e"ocp_username=${OCP_USERNAME}" -e"ocp_workload=${WORKLOAD}" -e"silent=False" -e"guid=${GUID}"  -e"ACTION=${ACTION}" -e"@extra_vars.yaml" -vvv
