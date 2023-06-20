@@ -59,6 +59,7 @@ jobs:
           echo "control  ansible_host=${{ inputs.hostname }}    ansible_connection=ssh ansible_user=${{ secrets.USERNAME }}"  ansible_ssh_private_key_file=/home/${{ secrets.USERNAME }}/.ssh/github-actions >> /tmp/hosts 
           #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
           #cat /tmp/hosts
+          pip3 install kubernetes openshift  && sudo pip3 install kubernetes openshift 
           ansible-galaxy collection install kubernetes.core community.general
           curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
           ./generate_vars.sh && cat extra_vars.yaml
