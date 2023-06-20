@@ -66,6 +66,7 @@ jobs:
           echo ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
              -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
              -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
+          pwd
           ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
              -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
              -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
