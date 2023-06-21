@@ -60,7 +60,8 @@ jobs:
           #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
           #cat /tmp/hosts
           sudo /opt/virtualenvs/k8s/bin/python -m ensurepip
-          sudo /opt/virtualenvs/k8s/bin/python -m pip  install openshift pyyaml kubernetes jmespath
+          sudo /opt/virtualenvs/k8s/bin/python -m pip install openshift pyyaml kubernetes jmespath
+          sudo pip3 install openshift pyyaml kubernetes jmespath && pip3 install  openshift pyyaml kubernetes jmespath
           ansible-galaxy collection install kubernetes.core community.general
           curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
           ./generate_vars.sh && cat extra_vars.yaml
