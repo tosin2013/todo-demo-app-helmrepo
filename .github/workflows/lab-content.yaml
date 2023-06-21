@@ -13,7 +13,7 @@ on:
       agnosticd_workload:
         description: AgnosticD workload to deploy
         required: true
-        default: ocp4_workload_gitea_operator
+        default: ocp4_workload_argocd_quay_todo_app
       agnosticd_action:
         description: AgnosticD action to perform create/remove
         required: true
