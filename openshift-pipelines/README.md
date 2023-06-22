@@ -12,6 +12,9 @@ After you `git clone` this directory, run the following to ensure the manifests 
 kustomize build openshift-pipelines
 ```
 
+## Deploy Using Github Actions
+[Deploy using Github Actions](github-actions.md)
+
 ## Quick Start Guide
 
 **When in doubt, run this script!**
