@@ -36,3 +36,6 @@ helm install  todo-demo-app-deployment  todo-demo-app/ --values todo-demo-app/va
 ```
 helm uninstall todo-demo-app-deployment
 ```
+
+## Workshop Deployment
+[todo-demo-app-helmrepo workshop deployment instructions](workshop_deployment.md)
