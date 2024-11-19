@@ -1,24 +1,8 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  creationTimestamp: '2024-11-19T13:30:44Z'
-  generation: 1
-  managedFields:
-    - apiVersion: tekton.dev/v1beta1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:spec':
-          .: {}
-          'f:params': {}
-          'f:steps': {}
-          'f:workspaces': {}
-      manager: Mozilla
-      operation: Update
-      time: '2024-11-19T13:30:44Z'
   name: update-image-tag-in-git
-  namespace: default
-  resourceVersion: '2999395'
-  uid: da03013f-e8f4-4e7b-8225-19a29a16567b
+  namespace: todo-demo-app
 spec:
   params:
     - description: Git repository containing manifest files to update
