@@ -65,6 +65,7 @@ else
   cd $HOME
   git clone $agnosticd_repo
   cd $HOME/agnosticd
+  git checkout ${agnosticd_workload}
 fi
 
 # 1. Copies the kubeconfig file from the specified source directory to the home directory of the current user.
