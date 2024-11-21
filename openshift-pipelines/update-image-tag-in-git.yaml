@@ -9,102 +9,76 @@ spec:
       name: GIT_REPOSITORY
       type: string
     - default: pipeline@example.com
+      description: Email address for Git commits
       name: GIT_EMAIL
       type: string
     - default: todo-demo-app
+      description: Name for Git commits
       name: GIT_NAME
       type: string
     - default: yamls/ocp
+      description: Directory in the repository containing manifest files
       name: GIT_MANIFEST_DIR
       type: string
     - default: quay.io/takinosh/todo-demo-app
-      description: Target Registry Name
+      description: Target registry name
       name: TARGET_IMAGE
       type: string
     - default: v1
-      description: Target TAG
+      description: Target image tag
       name: TARGET_TAG
       type: string
     - default: '1'
-      description: Replica Count
+      description: Number of replicas
       name: REPLICA_COUNT
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
+    - description: Username for Git authentication
+      name: GIT_USERNAME
+      type: string
+    - description: Token or password for Git authentication
+      name: GIT_TOKEN
+      type: string
   steps:
-    - args:
-        - '-c'
-        - >
-          set -eu
-
-          git config --global user.email "$(params.GIT_EMAIL)"
-
-          git config --global user.name "$(params.GIT_NAME)" 
-
-          git clone --branch main --depth 1
-          https://${GIT_USERNAME}:${GIT_TOKEN}@$(params.GIT_REPOSITORY) repo
-
-          cd "repo/$(params.GIT_MANIFEST_DIR)"
-
-          echo old value:
-
-          yq e '.image.repository'   app/values.yaml
-
-          yq e '.image.tag'   app/values.yaml
-
-          yq e '.replicaCount'   app/values.yaml
-
-          echo replacing with new values:
-
-          echo "IMAGE_URL: $(params.TARGET_IMAGE)"
-
-          echo "IMAGE_TAG: $(params.TARGET_TAG)"
-
-          echo "REPLICAS: $(params.REPLICA_COUNT)"
-
-          yq -i '.image.repository = "$(params.TARGET_IMAGE)"'
-          app/values.yaml
-
-          yq -i '.image.tag = "$(params.TARGET_TAG)"'
-          app/values.yaml
-
-          yq -i '.replicaCount = "$(params.REPLICA_COUNT)"'
-          app/values.yaml
-
-          echo verifying new values
-
-          cat app/values.yaml
-
-          if ! git diff-index --quiet HEAD --; then
-            git status
-            git add .
-            git commit -m "deployment updated by tekton pipeline"
-            git push
-          else
-              echo "no changes, git repository is up to date"
-          fi
-      command:
-        - /bin/bash
-      env:
-        - name: GIT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: git-infra-secret
-              optional: true
-        - name: GIT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: git-infra-secret
-              optional: true
-      image: 'quay.io/takinosh/tekton-tools:latest'
-      name: git-push
+    - image: 'quay.io/takinosh/tekton-tools:latest'
+      name: update-manifest
       resources: {}
-  volumes:
-    - emptyDir: {}
-      name: varlibcontainers
-    - emptyDir: {}
-      name: m2-repository
+      script: |
+        #!/bin/bash
+        set -eu
+
+        # Configure Git
+        git config --global user.email "$(params.GIT_EMAIL)"
+        git config --global user.name "$(params.GIT_NAME)"
+
+        # Clone the repository
+        git clone --branch main --depth 1 https://$(params.GIT_USERNAME):$(params.GIT_TOKEN)@$(params.GIT_REPOSITORY) /workspace/source/repo
+        cd /workspace/source/repo/$(params.GIT_MANIFEST_DIR)
+
+        # Display current values
+        echo "Current image repository: $(yq e '.image.repository' app/values.yaml)"
+        echo "Current image tag: $(yq e '.image.tag' app/values.yaml)"
+        echo "Current replica count: $(yq e '.replicaCount' app/values.yaml)"
+
+        # Update values
+        yq e -i '.image.repository = "$(params.TARGET_IMAGE)"' app/values.yaml
+        yq e -i '.image.tag = "$(params.TARGET_TAG)"' app/values.yaml
+        yq e -i '.replicaCount = "$(params.REPLICA_COUNT)"' app/values.yaml
+
+        # Verify changes
+        echo "Updated values:"
+        cat app/values.yaml
+
+        # Commit and push changes if any
+        if ! git diff-index --quiet HEAD --; then
+          git add .
+          git commit -m "Deployment updated by Tekton pipeline"
+          git push https://$(params.GIT_USERNAME):$(params.GIT_TOKEN)@$(params.GIT_REPOSITORY) main
+        else
+          echo "No changes detected; repository is up to date."
+        fi
+      volumeMounts:
+        - mountPath: /workspace/source
+          name: source-workspace
+  workspaces:
+    - description: Workspace containing the cloned Git repository
+      name: source-workspace
