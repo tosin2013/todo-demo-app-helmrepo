@@ -2,7 +2,6 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: todo-demo-app
-  namespace: todo-demo-app
 spec:
   to:
     kind: Service
