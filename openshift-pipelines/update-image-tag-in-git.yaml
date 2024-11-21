@@ -39,7 +39,7 @@ spec:
       name: GIT_TOKEN
       type: string
   steps:
-    - image: 'quay.io/takinosh/tekton-tools:latest'
+    - image: 'quay.io/takinosh/tekton-tools:v1.0.0'
       name: update-manifest
       resources: {}
       script: |
@@ -82,3 +82,6 @@ spec:
   workspaces:
     - description: Workspace containing the cloned Git repository
       name: source-workspace
+  volumes:
+    - name: source-workspace
+      emptyDir: {}
