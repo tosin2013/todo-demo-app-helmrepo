@@ -100,7 +100,7 @@ spec:
       params:
         - name: SCRIPT
           value: |
-            oc tag todo-demo-app:$(params.IMAGE_TAG) todo-demo-app:latest
+            oc tag todo-demo-app-user1-image:latest todo-demo-app-user1-image:$(params.IMAGE_TAG)
       runAfter:
         - build-java-app-image
       taskRef:
