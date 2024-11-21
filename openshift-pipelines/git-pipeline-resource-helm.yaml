@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: todo-demo-app-helmrepo-git
+  labels:
+    app: todo-demo-app-helmrepo
+  namespace: todo-demo-app
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://gitea-with-admin-gitea.apps.cluster-f2fds.f2fds.sandbox3175.opentlc.com/user1/todo-demo-app-helmrepo.git
+  - name: revision
+    value: main

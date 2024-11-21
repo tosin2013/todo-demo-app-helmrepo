@@ -1,0 +1,121 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-push-to-quay-todo-demo-app
+  labels:
+    app: todo-demo-app
+  namespace: todo-demo-app
+spec:
+  params:
+    - default: latest
+      description: Image Tag Value
+      name: IMAGE_TAG
+      type: string
+    - default: quay.io/takinosh/todo-demo-app:v1
+      name: quay-io-repository
+      type: string
+    - default: latest
+      name: quay-io-image-tag-name
+      type: string
+    - default: webhook-secret
+      description: Webhook secret name
+      name: webhook-secret
+      type: string
+  resources:
+    - name: app-git
+      type: git
+    - name: image
+      type: image
+  tasks:
+    - name: fetch-repository
+      params:
+        - name: url
+          value: 'https://github.com/tosin2013/todo-demo-app'
+        - name: revision
+          value: master
+        - name: subdirectory
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: maven-run
+      params:
+        - name: CONTEXT_DIR
+          value: .
+        - name: GOALS
+          value:
+            - '-DskipTests'
+            - clean
+            - package
+      runAfter:
+        - fetch-repository
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: build-java-app-image
+      params:
+        - name: CONTEXT
+          value: .
+        - name: DOCKERFILE
+          value: src/main/docker/Dockerfile
+        - name: IMAGE
+          value: >-
+            image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:$(params.IMAGE_TAG)
+        - name: TLSVERIFY
+          value: 'false'
+      runAfter:
+        - maven-run
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: tag-test-image
+      params:
+        - name: SCRIPT
+          value: |
+            oc tag todo-demo-app:$(params.IMAGE_TAG) todo-demo-app:latest
+      runAfter:
+        - build-java-app-image
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+    - name: push-to-test-env
+      params:
+        - name: SCRIPT
+          value: |
+            oc patch deployment/todo-demo-app  --patch='{"spec":{"template":{"spec":{"containers":[{"name":"todo-demo-app","image":"image-registry.openshift-image-registry.svc:5000/todo-demo-app/todo-demo-app:'$(params.IMAGE_TAG)'"}]}}}}' -n todo-demo-app
+      runAfter:
+        - tag-test-image
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+    - name: push-todo-demo-app-image-to-quay
+      params:
+        - name: quay-io-repository
+          value: $(params.quay-io-repository)
+        - name: quay-io-image-tag-name
+          value: $(params.quay-io-image-tag-name)
+      resources:
+        inputs:
+          - name: image
+            resource: image
+      runAfter:
+        - push-to-test-env
+      taskRef:
+        kind: Task
+        name: push-todo-demo-app-image-to-quay
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings

@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: todo-demo-app
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: todo-demo-app
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: app
+    repoURL: https://github.com/tosin2013/todo-demo-app-helmrepo.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false

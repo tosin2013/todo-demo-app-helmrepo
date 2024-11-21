@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sed-file
+spec:
+  params:
+  - default: README.md
+    description: Target Filename
+    name: filename
+    type: string
+  - default: "Hello, world!"
+    description: Target pattern
+    name: pattern
+    type: string
+  - default: "Hello, Tekton!"
+    description: Target replacement
+    name: replacement
+    type: string
+  resources:
+    inputs:
+    - name: app-git
+      type: git
+  steps:
+    - command:
+        - sh
+        - '-c'
+        - |
+          echo "sed -i \"s/$PATTERN/$REPLACEMENT/g\" $FILENAME"
+          sed -i "s/$PATTERN/$REPLACEMENT/g" $FILENAME
+          cat $FILENAME
+      env:
+        - name: FILENAME
+          value: $(params.filename)
+        - name: PATTERN
+          value: $(params.pattern)
+        - name: REPLACEMENT
+          value: $(params.replacement)
+      image: 'alpine:3.14'
+      name: sed
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: pipeline-cache
+      workingDir: /var/lib/containers
+  volumes:
+    - name: pipeline-cache
+      persistentVolumeClaim:
+        claimName: todo-demo-app-helm-workspace-pvc

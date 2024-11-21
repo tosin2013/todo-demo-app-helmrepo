@@ -1,0 +1,29 @@
+# Test chris in a box with miniChRIS-docker's test suite
+
+name: Test Tekton Pipeline and tasks 
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  Run-using-podman-on-Ubuntu:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Test Tekton Pipeline and tasks 
+        run: |
+          npm --version
+          npm i tekton-lint
+          npm install -g tekton-lint
+          #tekton-lint --help
+      - name: Checkout
+        uses: actions/checkout@v3
+          
+      - name: Start testing pipelines
+        run: | 
+          pwd
+          cd openshift-pipelines/
+          tekton-lint git-commit.yaml
+          tekton-lint update-image-tag-in-git.yaml

@@ -1,0 +1,74 @@
+name: Deploy Via AgnosticD
+on:
+  workflow_dispatch:
+    inputs:
+      hostname:
+        description: 'hostname'
+        required: false
+        default: hostname
+      agnosticd_repo:
+        description: 'Ansible Agnostic Deployer, AKA AAD, AKA AgnosticD, is a fully automated 2 Phase deployer for building and deploying everything from basic infrastructure to fully configured running application environments running on either public Cloud Providers or OpenShift clusters.'
+        required: false
+        default: https://github.com/tosin2013/agnosticd.git
+      agnosticd_workload:
+        description: AgnosticD workload to deploy
+        required: true
+        default: ocp4_workload_argocd_quay_todo_app
+      agnosticd_action:
+        description: AgnosticD action to perform create/remove
+        required: true
+        default: create
+      guid:
+        description: GUID
+        required: true
+        default: 1234
+      openshift_user:
+        description: OpenShift user
+        required: true
+        default: admin
+   
+jobs:
+  agnosticd_deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - name: configure agnosticd deployment
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ inputs.hostname }}
+        agnosticd_workload: ${{ inputs.agnosticd_workload }}
+        agnosticd_action: ${{ inputs.agnosticd_action }}
+        guid: ${{ inputs.guid }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        command_timeout: 30m
+        script: | 
+          sudo dnf install wget openssh-clients sshpass ansible-core openssl python3-jmespath -y
+          if [ -d "$HOME/agnosticd" ]; then
+            cd $HOME/agnosticd
+            git pull
+          else
+            git clone ${{ inputs.agnosticd_repo }}
+            cd $HOME/agnosticd
+          fi
+          sudo rm -rf /etc/ansible/roles/install_operator
+          sudo cp -avi /home/lab-user/agnosticd/ansible/roles/install_operator /etc/ansible/roles
+          ls /etc/ansible/roles
+          echo "[all]" > /tmp/hosts 
+          echo "control  ansible_host=${{ inputs.hostname }}    ansible_connection=ssh ansible_user=${{ secrets.USERNAME }}"  ansible_ssh_private_key_file=/home/${{ secrets.USERNAME }}/.ssh/github-actions >> /tmp/hosts 
+          #ssh -i  ~/.ssh/id_rsa  "$LAB_USER"@"$TARGET_SERVER"  df -h .
+          #cat /tmp/hosts
+          sudo /opt/virtualenvs/k8s/bin/python -m ensurepip
+          sudo /opt/virtualenvs/k8s/bin/python -m pip install openshift pyyaml kubernetes jmespath
+          sudo pip3 install openshift pyyaml kubernetes jmespath && pip3 install  openshift pyyaml kubernetes jmespath
+          ansible-galaxy collection install kubernetes.core community.general
+          curl -OL https://raw.githubusercontent.com/tosin2013/todo-demo-app-helmrepo/main/generate_vars.sh && chmod +x generate_vars.sh
+          ./generate_vars.sh && cat extra_vars.yaml
+          echo ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
+             -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
+          pwd
+          ansible-playbook -i /tmp/hosts ${HOME}/agnosticd/ansible/configs/ocp-workloads/ocp-workload.yml -e" ~/.ssh/github-actions" -e"ansible_user=${{ secrets.USERNAME }}" \
+             -e"ocp_username=${{ inputs.openshift_user }}"  -e ansible_password='{{ lookup("env", "ANSIBLE_PASSWORD") }}' \
+             -e"ocp_workload=${{ inputs.agnosticd_workload }}" -e"silent=False" -e"guid=${{ inputs.guid }}"  -e"ACTION=${{ inputs.agnosticd_action }}"  -e"@extra_vars.yaml" -v
