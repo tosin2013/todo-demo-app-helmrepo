@@ -19,7 +19,7 @@ spec:
       type: string
   steps:
     - computeResources: {}
-      image: registry.redhat.io/rhel9/podman
+      image: registry.redhat.io/rhel9/podman:9.5-1730554132
       name: podman-pull-image
       script: |
         #!/bin/sh
@@ -31,7 +31,7 @@ spec:
         - mountPath: /var/lib/containers
           name: varlibcontainers
     - computeResources: {}
-      image: registry.redhat.io/rhel9/buildah
+      image: registry.redhat.io/rhel9/buildah:9.5
       name: buildah-tag-image
       script: |
         #!/bin/sh
@@ -44,7 +44,7 @@ spec:
         - mountPath: /var/lib/containers
           name: varlibcontainers
     - computeResources: {}
-      image: registry.redhat.io/rhel9/buildah
+      image: registry.redhat.io/rhel9/buildah:9.5
       name: buildah-list-images-after-tagging
       script: |
         #!/bin/sh
@@ -55,11 +55,25 @@ spec:
         - mountPath: /var/lib/containers
           name: varlibcontainers
     - computeResources: {}
-      image: registry.redhat.io/rhel9/buildah
+      image: registry.redhat.io/rhel9/buildah:9.5
+      name: buildah-login-to-quay
+      script: |
+        #!/bin/sh
+        cat /etc/secret-volume/.dockerconfigjson
+        buildah login --tls-verify=false --authfile /etc/secret-volume/.dockerconfigjson quay.io
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /etc/secret-volume
+          name: secret-volume
+          readOnly: true
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+    - computeResources: {}
+      image: registry.redhat.io/rhel9/buildah:9.5
       name: push-todo-demo-app-image-to-quay
       script: |
         #!/bin/sh
-        ls -lath /etc/secret-volume/.dockerconfigjson 
         buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=false \
           --authfile /etc/secret-volume/.dockerconfigjson \
           $(params.quay-io-repository):$(params.quay-io-image-tag-name)
