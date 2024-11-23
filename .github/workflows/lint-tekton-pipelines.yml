@@ -25,5 +25,7 @@ jobs:
         run: |
           pwd
           cd openshift-pipelines/
-          tekton-lint git-commit.yaml
-          tekton-lint update-image-tag-in-git.yaml
+          for file in *.yaml; do
+            tekton-lint $file
+            npx @ibm/tekton-lint@latest $file
+          done
