@@ -102,26 +102,50 @@ yq e '.guid = "'${guid}'"' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo
 
 
 # Validate input
+# This script checks if the variable 'user_count' contains a valid number.
+# If 'user_count' does not match a regular expression for one or more digits,
+# it prints an error message and exits with status code 1.
 if ! [[ "$user_count" =~ ^[0-9]+$ ]]; then
   echo "Error: Please enter a valid number."
   exit 1
 fi
 
 # Create users array dynamically
+# This script generates a comma-separated list of user names in the format "user1", "user2", ..., "userN".
+# The variable `user_count` should be set to the number of users to include in the list.
+# The resulting list is stored in the `users_list` variable.
 users_list=""
 for i in $(seq 1 $user_count); do
   users_list+="\"user$i\", "
 done
 
+# This script snippet removes the trailing comma and space from the variable 'users_list'.
+# It uses parameter expansion to strip the last comma and space from the string.
 # Remove the trailing comma and space
 users_list=${users_list%, }
 
+# This script updates a YAML file with a new list of users.
+# It uses the 'yq' command to edit the 'users' field in the specified YAML file.
+# The 'users_list' variable contains the new list of users to be added.
+# The '-i' option is used to edit the file in place.
+# If the 'yq' command fails, the script exits with the corresponding error code.
 # Update the YAML file with the new users
 yq e '.users = ['"${users_list}"']' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
 
+# This script displays the contents of the updated YAML file located at
+# /home/<username>/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml.
+# It uses the `cat` command to output the file's content to the terminal.
+# Note: <username> is dynamically replaced with the current user's username.
 # Display the updated YAML file
 cat "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml"
 
+# This script runs the appropriate Ansible playbook based on the value of the
+# environment variable `agnosticd_action`. If `agnosticd_action` is set to "create",
+# it runs the `ansible/main.yml` playbook using the specified execution environment
+# image and passes the `KUBECONFIG` environment variable. It also uses the configuration
+# file `ansible/configs/todo-demo-app-helmrepo.yaml` and outputs in stdout mode.
+# If `agnosticd_action` is set to "destroy", it runs the `ansible/destroy.yml` playbook
+# using the same execution environment image and configuration file, and outputs in stdout mode.
 # Run the appropriate Ansible playbook based on the action
 if [ "$agnosticd_action" == "create" ]; then
   ansible-navigator run ansible/main.yml \
