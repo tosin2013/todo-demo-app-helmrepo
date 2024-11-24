@@ -98,6 +98,27 @@ yq e '.cluster_one.api_url = "'${OPENSHIFT_API_URL}'"' -i "/home/${USER}/agnosti
 yq e '.guid = "'${guid}'"' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
 
 
+# Prompt user for the number of users
+read -p "Enter the number of users to add: " user_count
+
+# Validate input
+if ! [[ "$user_count" =~ ^[0-9]+$ ]]; then
+  echo "Error: Please enter a valid number."
+  exit 1
+fi
+
+# Create users array dynamically
+users_list=""
+for i in $(seq 1 $user_count); do
+  users_list+="user$i\n"
+done
+
+# Update the YAML file with the new users
+yq e '.users = ['$(echo $users_list | sed 's/\\n/,/g' | sed 's/,*$//')']' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
+
+# Display the updated YAML file
+cat "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml"
+
 # This script runs an Ansible playbook using ansible-navigator.
 # The playbook to be executed is located at ansible/main.yml.
 # The execution environment image (EEI) used is from quay.io/agnosticd/ee-multicloud:latest.
