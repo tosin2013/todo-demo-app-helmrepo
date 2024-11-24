@@ -9,6 +9,7 @@ This is an example application based on a [Todo list](https://github.com/tosin20
 [![pages-build-deployment](https://github.com/tosin2013/todo-demo-app-helmrepo/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/tosin2013/todo-demo-app-helmrepo/actions/workflows/pages/pages-build-deployment)
 [![Release Charts](https://github.com/tosin2013/todo-demo-app-helmrepo/actions/workflows/release.yaml/badge.svg)](https://github.com/tosin2013/todo-demo-app-helmrepo/actions/workflows/release.yaml)
 
+
 ## Requirements
 **Install Helm**
 ```
@@ -39,3 +40,6 @@ helm uninstall todo-demo-app-deployment
 
 ## Workshop Deployment
 [todo-demo-app-helmrepo workshop deployment instructions](workshop_deployment.md)
+
+## Workshop Link
+[GitOps-Driven CI/CD Workshop on OpenShift with Tekton Pipelines and Quay](https://red-hat-se-rto.github.io/todo-demo-app-helmrepo-workshop/modules/index.html)
