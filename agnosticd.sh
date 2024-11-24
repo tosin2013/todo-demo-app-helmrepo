@@ -6,10 +6,6 @@ set -x
 # The agnosticd action can be either 'create' or 'remove'.
 read -p "Enter the host: " host
 read -p "Enter the agnosticd action (create or remove): " agnosticd_action
-# Prompt for OpenShift API details
-read -p "Enter the OpenShift API Key: " OPENSHIFT_API_KEY
-read -p "Enter the OpenShift API URL: " OPENSHIFT_API_URL
-
 # This script checks the value of the 'agnosticd_action' variable.
 # If the value is not 'create' or 'remove', it prints an error message
 # and exits with a status code of 1.
@@ -18,6 +14,13 @@ if [[ "$agnosticd_action" != "create" && "$agnosticd_action" != "remove" ]]; the
   exit 1
 fi
 
+# Prompt for OpenShift API details
+read -p "Enter the OpenShift API Key: " OPENSHIFT_API_KEY
+read -p "Enter the OpenShift API URL: " OPENSHIFT_API_URL
+
+
+# Prompt user for the number of users
+read -p "Enter the number of users to add: " user_count
 
 # https://github.com/mikefarah/yq/releases
 YQ_VERSION=4.44.3
@@ -98,9 +101,6 @@ yq e '.cluster_one.api_url = "'${OPENSHIFT_API_URL}'"' -i "/home/${USER}/agnosti
 yq e '.guid = "'${guid}'"' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
 
 
-# Prompt user for the number of users
-read -p "Enter the number of users to add: " user_count
-
 # Validate input
 if ! [[ "$user_count" =~ ^[0-9]+$ ]]; then
   echo "Error: Please enter a valid number."
@@ -110,32 +110,26 @@ fi
 # Create users array dynamically
 users_list=""
 for i in $(seq 1 $user_count); do
-  users_list+="user$i\n"
+  users_list+="\"user$i\", "
 done
 
+# Remove the trailing comma and space
+users_list=${users_list%, }
+
 # Update the YAML file with the new users
-yq e '.users = ['$(echo $users_list | sed 's/\\n/,/g' | sed 's/,*$//')']' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
+yq e '.users = ['"${users_list}"']' -i "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml" || exit $?
 
 # Display the updated YAML file
 cat "/home/${USER}/agnosticd/ansible/configs/todo-demo-app-helmrepo.yaml"
 
-# This script runs an Ansible playbook using ansible-navigator.
-# The playbook to be executed is located at ansible/main.yml.
-# The execution environment image (EEI) used is from quay.io/agnosticd/ee-multicloud:latest.
-# The KUBECONFIG environment variable is passed to the execution environment.
-# Additional variables are loaded from ansible/configs/todo-demo-app-helmrepo.yaml.
-# The output mode is set to stdout, and verbose mode is enabled.
-ansible-navigator run ansible/main.yml \
-          --eei quay.io/agnosticd/ee-multicloud:latest \
-          --pass-environment-variable KUBECONFIG \
-          -e @ansible/configs/todo-demo-app-helmrepo.yaml  -m stdout -v
-
-
-# This script is intended to run an Ansible playbook to destroy resources.
-# It uses the ansible-navigator tool to execute the playbook located at ansible/destroy.yml.
-# The execution environment image (EEI) used is quay.io/agnosticd/ee-multicloud:latest.
-# The playbook is provided with extra variables from the file ansible/configs/todo-demo-app-helmrepo.yaml.
-# The output mode is set to stdout.
-#ansible-navigator run ansible/destroy.yml \
-#      --eei quay.io/agnosticd/ee-multicloud:latest \
-#      -e @ansible/configs/todo-demo-app-helmrepo.yaml   -m stdout
+# Run the appropriate Ansible playbook based on the action
+if [ "$agnosticd_action" == "create" ]; then
+  ansible-navigator run ansible/main.yml \
+            --eei quay.io/agnosticd/ee-multicloud:latest \
+            --pass-environment-variable KUBECONFIG \
+            -e @ansible/configs/todo-demo-app-helmrepo.yaml -m stdout -v
+elif [ "$agnosticd_action" == "destroy" ]; then
+  ansible-navigator run ansible/destroy.yml \
+            --eei quay.io/agnosticd/ee-multicloud:latest \
+            -e @ansible/configs/todo-demo-app-helmrepo.yaml -m stdout
+fi
